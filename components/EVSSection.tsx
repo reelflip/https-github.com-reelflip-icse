@@ -1,44 +1,38 @@
 
 import React, { useState, useEffect } from 'react';
-import { getEVSTopic, generateKidImage } from '../services/geminiService';
-import { ActivityContent, Grade } from '../types';
-import { RefreshCw, Leaf, Sun, Heart, Coffee, ShieldCheck, Map, Sparkles } from 'lucide-react';
-
-const EVS_TOPICS = [
-  { id: 'Environment', icon: <Leaf className="text-green-500" /> },
-  { id: 'Human Body', icon: <Heart className="text-red-500" /> },
-  { id: 'Safety', icon: <ShieldCheck className="text-blue-500" /> },
-  { id: 'The Sun', icon: <Sun className="text-yellow-500" /> },
-  { id: 'Landmarks', icon: <Map className="text-purple-500" /> }
-];
+import { getEVSTopic, generateKidImage } from '../services/geminiService.ts';
+import { ActivityContent, Grade } from '../types.ts';
+import { RefreshCw, Leaf, Sun, Heart, ShieldCheck, Map, Sparkles, Book } from 'lucide-react';
 
 const EVSSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [content, setContent] = useState<ActivityContent | null>(null);
-  const [selectedTopic, setSelectedTopic] = useState('Environment');
+  const [selectedTopic, setSelectedTopic] = useState('');
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
-  
-  // Landmark Explorer State
-  const [landmarkImage, setLandmarkImage] = useState<string | null>(null);
-  const [generatingImg, setGeneratingImg] = useState(false);
+  const [illustration, setIllustration] = useState<string | null>(null);
+
+  // ICSE Syllabus Topics per Grade
+  const syllabusTopics: Record<number, {id: string, icon: any}[]> = {
+    1: [{ id: 'My Body', icon: <Heart size={18}/> }, { id: 'Family', icon: <Book size={18}/> }],
+    2: [{ id: 'Internal Organs', icon: <Heart size={18}/> }, { id: 'Plants', icon: <Leaf size={18}/> }, { id: 'Safety', icon: <ShieldCheck size={18}/> }],
+    3: [{ id: 'Solar System', icon: <Sun size={18}/> }, { id: 'Early Man', icon: <Map size={18}/> }],
+    4: [{ id: 'Environment', icon: <Leaf size={18}/> }, { id: 'Transport', icon: <Map size={18}/> }],
+    5: [{ id: 'India', icon: <Map size={18}/> }, { id: 'Health', icon: <Heart size={18}/> }]
+  };
+
+  const currentTopics = syllabusTopics[grade] || syllabusTopics[2];
 
   const loadTopic = async (topic: string) => {
     setLoading(true);
     setShowResult(false);
     setSelectedOption(null);
-    setLandmarkImage(null);
+    setIllustration(null);
     try {
       const data = await getEVSTopic(grade, topic);
       setContent(data);
-      
-      // Auto-generate image for Landmarks topic
-      if (topic === 'Landmarks') {
-        setGeneratingImg(true);
-        const img = await generateKidImage(`A famous world landmark: ${data.title}`);
-        setLandmarkImage(img);
-        setGeneratingImg(false);
-      }
+      const img = await generateKidImage(data.title);
+      setIllustration(img);
     } catch (error) {
       console.error(error);
     } finally {
@@ -47,8 +41,12 @@ const EVSSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onB
   };
 
   useEffect(() => {
-    loadTopic(selectedTopic);
-  }, [selectedTopic, grade]);
+    if (currentTopics.length > 0) {
+      const initialTopic = currentTopics[0].id;
+      setSelectedTopic(initialTopic);
+      loadTopic(initialTopic);
+    }
+  }, [grade]);
 
   const handleAnswer = (option: string) => {
     setSelectedOption(option);
@@ -66,19 +64,19 @@ const EVSSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onB
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        {EVS_TOPICS.map((topic) => (
+      <div className="flex flex-wrap gap-3 justify-center">
+        {currentTopics.map((topic) => (
           <button
             key={topic.id}
-            onClick={() => setSelectedTopic(topic.id)}
-            className={`flex flex-col items-center gap-2 p-4 rounded-2xl transition-all shadow-sm ${
+            onClick={() => { setSelectedTopic(topic.id); loadTopic(topic.id); }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-2xl transition-all shadow-sm font-bold ${
               selectedTopic === topic.id
                 ? 'bg-orange-500 text-white shadow-md scale-105'
                 : 'bg-white text-orange-600 border border-orange-100 hover:bg-orange-50'
             }`}
           >
             {topic.icon}
-            <span className="font-bold text-xs sm:text-sm">{topic.id}</span>
+            {topic.id}
           </button>
         ))}
       </div>
@@ -87,13 +85,13 @@ const EVSSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onB
         <div className="md:col-span-2 space-y-6">
           <div className="bg-white p-8 rounded-3xl shadow-xl border-l-8 border-orange-400 space-y-4">
             <h2 className="text-3xl font-kids text-orange-600">{content?.title}</h2>
-            <div className="text-lg leading-relaxed text-gray-700 bg-orange-50/30 p-4 rounded-xl whitespace-pre-wrap">
+            <div className="text-lg leading-relaxed text-gray-700 bg-orange-50/30 p-4 rounded-xl">
               {content?.description}
             </div>
           </div>
 
           <div className="bg-orange-100 p-6 rounded-3xl space-y-4 border-2 border-orange-200">
-            <h3 className="text-xl font-bold text-orange-800">Knowledge Check:</h3>
+            <h3 className="text-xl font-bold text-orange-800">Quick Quiz:</h3>
             <p className="text-lg text-orange-900 font-medium">{content?.question}</p>
             <div className="space-y-2">
               {content?.options?.map((option, idx) => (
@@ -119,21 +117,14 @@ const EVSSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onB
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-3xl shadow-lg border-2 border-dashed border-orange-300 flex flex-col items-center gap-4">
-            <h3 className="text-xl font-kids text-orange-600 text-center flex items-center gap-2">
+          <div className="bg-white p-6 rounded-3xl shadow-lg border-2 border-dashed border-orange-300">
+            <h3 className="text-xl font-kids text-orange-600 flex items-center gap-2 mb-2">
                <Sparkles size={20} /> Fun Fact
             </h3>
-            <p className="text-gray-700 italic text-center leading-relaxed">"{content?.funFact}"</p>
+            <p className="text-gray-700 italic leading-relaxed">"{content?.funFact}"</p>
           </div>
-          <div className="rounded-3xl overflow-hidden shadow-lg aspect-square border-4 border-white relative bg-orange-50 flex items-center justify-center">
-             {landmarkImage ? (
-               <img src={landmarkImage} alt={content?.title} className="w-full h-full object-cover" />
-             ) : (
-               <div className="flex flex-col items-center gap-2 text-orange-300">
-                  <RefreshCw className={generatingImg ? 'animate-spin' : ''} />
-                  <p className="text-sm font-bold">Painting illustration...</p>
-               </div>
-             )}
+          <div className="rounded-3xl overflow-hidden shadow-lg aspect-square bg-orange-50 border-4 border-white">
+             {illustration && <img src={illustration} alt="EVS Lesson" className="w-full h-full object-cover" />}
           </div>
         </div>
       </div>

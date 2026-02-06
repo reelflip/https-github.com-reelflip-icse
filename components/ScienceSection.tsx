@@ -1,13 +1,23 @@
 
 import React, { useState, useEffect } from 'react';
 import { Beaker, RefreshCw, Zap, Microscope, Info } from 'lucide-react';
-import { getScienceExperiment } from '../services/geminiService';
-import { ScienceExperiment, Grade } from '../types';
+import { getScienceExperiment } from '../services/geminiService.ts';
+import { ScienceExperiment, Grade } from '../types.ts';
 
 const ScienceSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [experiment, setExperiment] = useState<ScienceExperiment | null>(null);
-  const [topic, setTopic] = useState('States of Matter');
+  const [topic, setTopic] = useState('');
+
+  const syllabusScience: Record<number, string[]> = {
+    1: ['Living Things'],
+    2: ['States of Matter', 'Animal Habitats'],
+    3: ['Force and Motion'],
+    4: ['Digestive System'],
+    5: ['Simple Machines']
+  };
+
+  const currentTopics = syllabusScience[grade] || syllabusScience[2];
 
   const loadExperiment = async (newTopic: string) => {
     setLoading(true);
@@ -22,12 +32,10 @@ const ScienceSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade,
   };
 
   useEffect(() => {
-    loadExperiment(topic);
-  }, [topic, grade]);
-
-  const topics = grade <= 2 
-    ? ['Plants', 'States of Matter']
-    : ['Solar System', 'Electricity'];
+    const initialTopic = currentTopics[0];
+    setTopic(initialTopic);
+    loadExperiment(initialTopic);
+  }, [grade]);
 
   if (loading) {
     return (
@@ -41,10 +49,10 @@ const ScienceSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade,
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-fadeIn">
       <div className="flex gap-4 overflow-x-auto pb-4 justify-center no-scrollbar">
-        {topics.map((t) => (
+        {currentTopics.map((t) => (
           <button
             key={t}
-            onClick={() => setTopic(t)}
+            onClick={() => { setTopic(t); loadExperiment(t); }}
             className={`px-6 py-3 rounded-2xl font-bold transition-all shadow-md whitespace-nowrap ${
               topic === t ? 'bg-purple-600 text-white scale-105' : 'bg-white text-purple-600 border border-purple-100'
             }`}
@@ -63,7 +71,7 @@ const ScienceSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade,
           
           <div className="space-y-4">
             <h3 className="font-bold text-lg flex items-center gap-2 text-indigo-700">
-              <Zap className="text-yellow-500" size={20} /> Supplies Needed:
+              <Zap className="text-yellow-500" size={20} /> What you need:
             </h3>
             <div className="flex flex-wrap gap-2">
               {experiment?.materials.map((m, i) => (
@@ -75,11 +83,11 @@ const ScienceSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade,
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-bold text-lg text-indigo-700">What to do:</h3>
+            <h3 className="font-bold text-lg text-indigo-700">The Discovery Plan:</h3>
             <ol className="space-y-3">
               {experiment?.steps.map((s, i) => (
-                <li key={i} className="flex gap-3 items-start group">
-                  <span className="bg-purple-100 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                <li key={i} className="flex gap-3 items-start">
+                  <span className="bg-purple-100 text-purple-700 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 font-bold">
                     {i + 1}
                   </span>
                   <p className="text-gray-700 pt-1">{s}</p>
@@ -92,21 +100,21 @@ const ScienceSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade,
         <div className="space-y-6">
           <div className="bg-indigo-600 p-8 rounded-3xl shadow-xl text-white space-y-4">
             <h3 className="text-2xl font-kids flex items-center gap-2">
-              <Microscope size={28} /> Why it happens?
+              <Microscope size={28} /> The Science Secret
             </h3>
             <p className="text-lg leading-relaxed opacity-90 italic">
               {experiment?.explanation}
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border-2 border-dashed border-purple-200 flex flex-col items-center justify-center text-center gap-4 min-h-[200px]">
+          <div className="bg-white p-6 rounded-3xl border-2 border-dashed border-purple-200 flex flex-col items-center justify-center text-center gap-4">
             <img 
-              src={`https://picsum.photos/seed/${experiment?.title.replace(/\s/g, '')}/400/400`} 
+              src={`https://picsum.photos/seed/${encodeURIComponent(experiment?.title || 'sci')}/400/400`} 
               className="w-full rounded-2xl shadow-md border-4 border-white"
-              alt="Lab Illustration" 
+              alt="Science Observation" 
             />
             <p className="text-gray-500 text-sm font-medium flex items-center gap-1">
-              <Info size={14} /> Illustration for Standard {grade} Science
+              <Info size={14} /> ICSE Standard {grade} Discovery
             </p>
           </div>
         </div>
