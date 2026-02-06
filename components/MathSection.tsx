@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { getMathChallenge } from '../services/geminiService';
-import { ActivityContent, Grade } from '../types';
+import { getMathChallenge } from '../services/geminiService.ts';
+import { ActivityContent, Grade } from '../types.ts';
 import { Calculator, CheckCircle2, XCircle, RefreshCw, Trophy } from 'lucide-react';
 
 const MathSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onBack }) => {

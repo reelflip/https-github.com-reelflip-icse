@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { BookOpen, Calculator, Leaf, Palette, Microscope, RotateCcw } from 'lucide-react';
-import { Subject, Grade } from '../types';
+import { Subject, Grade } from '../types.ts';
 
 interface DashboardProps {
   grade: Grade;

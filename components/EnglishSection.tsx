@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { getStoryNode, speakText } from '../services/geminiService';
-import { StoryNode, Grade } from '../types';
-import { RefreshCw, PlayCircle, BookOpen, Volume2 } from 'lucide-react';
+import { getStoryNode, speakText } from '../services/geminiService.ts';
+import { StoryNode, Grade } from '../types.ts';
+import { RefreshCw, PlayCircle, Volume2 } from 'lucide-react';
 
 const EnglishSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade, onBack }) => {
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,7 @@ const EnglishSection: React.FC<{ grade: Grade; onBack: () => void }> = ({ grade,
     if (!currentNode || speaking) return;
     setSpeaking(true);
     speakText(currentNode.text).then(() => {
-      // Small timeout to simulate end of speech as native API is sometimes unreliable with onend
+      // Simulate end of speech for UI feedback
       setTimeout(() => setSpeaking(false), currentNode.text.length * 60);
     });
   };

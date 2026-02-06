@@ -1,33 +1,42 @@
 
-import { ActivityContent, StoryNode, ScienceExperiment, Grade } from "../types";
+import { ActivityContent, StoryNode, ScienceExperiment, Grade } from "../types.ts";
 
-// Static library of curriculum-aligned content for ICSE Standard 1-5
 const STATIC_CONTENT = {
   Math: {
+    1: [
+      {
+        title: "Counting Stars",
+        description: "Counting objects up to 20.",
+        question: "How many sides does a triangle have?",
+        options: ["2", "3", "4"],
+        answer: "3",
+        funFact: "A triangle is the strongest shape in building bridges!"
+      }
+    ],
     2: [
       {
         title: "Magic Addition",
-        description: "Adding 3-digit numbers together!",
-        question: "What is 345 + 128?",
-        options: ["473", "463", "573"],
-        answer: "473",
-        funFact: "The symbol '+' was invented in the 14th century!"
+        description: "Adding 3-digit numbers with carrying!",
+        question: "What is 345 + 155?",
+        options: ["500", "490", "510"],
+        answer: "500",
+        funFact: "The number zero was discovered in India by Aryabhata!"
       },
       {
         title: "Place Value Fun",
-        description: "Let's find where numbers live.",
-        question: "What is the place value of 5 in 567?",
-        options: ["Tens", "Hundreds", "Ones"],
-        answer: "Hundreds",
-        funFact: "Zero was first used as a number in India!"
+        description: "Identify hundreds, tens and ones.",
+        question: "In the number 782, what is the value of 7?",
+        options: ["7", "70", "700"],
+        answer: "700",
+        funFact: "The word 'digit' comes from the Latin word for finger!"
       },
       {
-        title: "Shape Explorer",
-        description: "Flat and solid shapes.",
-        question: "Which of these is a 3D shape?",
-        options: ["Square", "Cube", "Circle"],
-        answer: "Cube",
-        funFact: "A cube has 6 faces, 12 edges, and 8 corners!"
+        title: "Multiplication Table",
+        description: "Basic multiplication for beginners.",
+        question: "What is 5 times 4?",
+        options: ["15", "20", "25"],
+        answer: "20",
+        funFact: "Anything multiplied by zero is always zero!"
       }
     ]
   },
@@ -35,58 +44,58 @@ const STATIC_CONTENT = {
     2: [
       {
         title: "Our Internal Organs",
-        description: "The parts of our body we can't see.",
-        question: "Which organ helps us breathe air?",
-        options: ["Heart", "Lungs", "Stomach"],
-        answer: "Lungs",
-        funFact: "Your heart is roughly the size of your fist!"
+        description: "The hard workers inside your body.",
+        question: "Which organ pumps blood to all parts of your body?",
+        options: ["Lungs", "Brain", "Heart"],
+        answer: "Heart",
+        funFact: "Your heart pumps about 2,000 gallons of blood every single day!"
       },
       {
-        title: "Safety First",
-        description: "How to stay safe everywhere.",
-        question: "Where should we cross the road?",
-        options: ["Anywhere", "Zebra Crossing", "Near a car"],
-        answer: "Zebra Crossing",
-        funFact: "The first zebra crossing was used in 1951!"
+        title: "Neighborhood Helpers",
+        description: "People who keep our city running.",
+        question: "Who uses a hose and a ladder to put out fires?",
+        options: ["Doctor", "Police Officer", "Firefighter"],
+        answer: "Firefighter",
+        funFact: "Modern fire engines can carry up to 1,000 gallons of water!"
       },
       {
-        title: "My Neighborhood",
-        description: "People who help us.",
-        question: "Where do we go when we are sick?",
-        options: ["Market", "Hospital", "School"],
-        answer: "Hospital",
-        funFact: "A group of doctors is called a 'consultation'!"
+        title: "Safety at Home",
+        description: "Rules to stay happy and safe.",
+        question: "Should we play with sharp objects like knives or scissors?",
+        options: ["Yes, for fun", "Only with friends", "No, never"],
+        answer: "No, never",
+        funFact: "Safety rules help us enjoy our play without getting hurt!"
       }
     ]
   },
   Science: {
     2: [
       {
-        title: "Plant Parts",
-        description: "Learning how plants grow.",
-        materials: ["Clear jar", "Paper towel", "Bean seed"],
-        steps: ["Wet the towel", "Put seed in jar", "Watch it grow!"],
-        explanation: "The roots grow down to find water, and the stem grows up to find sunlight!",
-        videoPrompt: "A small bean plant growing roots"
+        title: "The Life of a Plant",
+        description: "How a tiny seed grows into a big tree.",
+        materials: ["Clear cup", "Wet cotton", "Bean seed"],
+        steps: ["Place wet cotton in cup", "Tuck the seed inside", "Keep it in the sun"],
+        explanation: "Seeds need water, air, and sunlight to germinate into plants!",
+        videoPrompt: "A seedling sprouting"
       },
       {
         title: "States of Matter",
         description: "Solid, Liquid, and Gas.",
-        materials: ["Ice cube", "Bowl", "Sunlight"],
-        steps: ["Place ice in bowl", "Wait 10 minutes", "See it turn to water"],
-        explanation: "Ice is a solid. When it melts, it becomes a liquid (water)!",
-        videoPrompt: "Ice melting into a puddle"
+        materials: ["Ice cube", "Bowl", "Warm window"],
+        steps: ["Put ice in the bowl", "Watch it melt into water", "Wait for the water to dry up"],
+        explanation: "Ice is a solid, water is a liquid, and steam is a gas!",
+        videoPrompt: "Ice turning to water"
       }
     ]
   },
   Stories: {
     2: [
       {
-        text: "Once upon a time, a clever little rabbit named Rocky found a giant carrot. It was so big that he couldn't lift it alone! He saw his friend Benny the Bear nearby.",
-        illustrationPrompt: "A rabbit and a bear looking at a giant carrot",
+        text: "In the magical forest of ICSE, a brave squirrel named Nutty found a map to the Great Oak Tree. Suddenly, the path split in two!",
+        illustrationPrompt: "A squirrel looking at a map in a forest",
         options: [
-          { text: "Ask Benny for help", nextPrompt: "ask_help" },
-          { text: "Try to dig it up", nextPrompt: "dig_up" }
+          { text: "Go through the Whispering Flowers", nextPrompt: "flowers" },
+          { text: "Cross the Giggling Brook", nextPrompt: "brook" }
         ],
         isEnd: false
       }
@@ -94,26 +103,20 @@ const STATIC_CONTENT = {
   }
 };
 
-// Fallback for other grades to ensure the app doesn't crash
-const getFallback = (subject: string, grade: Grade) => {
-  return (STATIC_CONTENT as any)[subject]?.[2]?.[0] || {};
-};
-
 export const getStoryNode = async (grade: Grade, prompt: string, history: string[] = []): Promise<StoryNode> => {
-  // Simple logic to simulate story branching with static nodes
-  const stories = STATIC_CONTENT.Stories[grade as keyof typeof STATIC_CONTENT.Stories] || STATIC_CONTENT.Stories[2];
-  if (prompt === "ask_help") {
+  const stories = (STATIC_CONTENT.Stories as any)[grade] || STATIC_CONTENT.Stories[2];
+  if (prompt === "flowers") {
     return {
-      text: "Benny the Bear used his strong paws to pull the carrot. Together, they made a delicious soup for everyone in the forest!",
-      illustrationPrompt: "Rabbit and bear eating soup",
+      text: "The flowers told Nutty a funny joke! He laughed so hard he fell into a pile of soft leaves and found a golden acorn. The End!",
+      illustrationPrompt: "Happy squirrel with a golden acorn",
       options: [],
       isEnd: true
     };
   }
-  if (prompt === "dig_up") {
+  if (prompt === "brook") {
     return {
-      text: "Rocky dug and dug until he found a hidden treasure chest under the carrot! It was full of golden clover seeds.",
-      illustrationPrompt: "Rabbit finding a treasure chest",
+      text: "The water was ticklish! Nutty hopped across the stones and met a friendly turtle who gave him a ride to the Great Oak. Success!",
+      illustrationPrompt: "Squirrel riding on a turtle",
       options: [],
       isEnd: true
     };
@@ -122,42 +125,32 @@ export const getStoryNode = async (grade: Grade, prompt: string, history: string
 };
 
 export const generateKidImage = async (prompt: string): Promise<string> => {
-  // Return curated high-quality educational images based on keywords
-  const seed = prompt.split(' ').pop() || 'education';
+  const seed = prompt.split(' ').pop() || 'kid';
   return `https://picsum.photos/seed/${seed}/600/600`;
 };
 
 export const getScienceExperiment = async (grade: Grade, topic: string): Promise<ScienceExperiment> => {
-  const experiments = STATIC_CONTENT.Science[grade as keyof typeof STATIC_CONTENT.Science] || STATIC_CONTENT.Science[2];
-  const found = experiments.find(e => e.title.includes(topic) || topic.includes(e.title)) || experiments[0];
+  const experiments = (STATIC_CONTENT.Science as any)[grade] || STATIC_CONTENT.Science[2];
+  const found = experiments.find((e: any) => e.title.includes(topic)) || experiments[0];
   return found;
 };
 
 export const getMathChallenge = async (grade: Grade, type: string): Promise<ActivityContent> => {
-  const problems = STATIC_CONTENT.Math[grade as keyof typeof STATIC_CONTENT.Math] || STATIC_CONTENT.Math[2];
-  const randomIndex = Math.floor(Math.random() * problems.length);
-  return problems[randomIndex];
+  const problems = (STATIC_CONTENT.Math as any)[grade] || (STATIC_CONTENT.Math as any)[2];
+  return problems[Math.floor(Math.random() * problems.length)];
 };
 
 export const getEVSTopic = async (grade: Grade, topic: string): Promise<ActivityContent> => {
-  const topics = STATIC_CONTENT.EVS[grade as keyof typeof STATIC_CONTENT.EVS] || STATIC_CONTENT.EVS[2];
-  const found = topics.find(t => t.title.includes(topic) || topic.includes(t.title)) || topics[0];
+  const topics = (STATIC_CONTENT.EVS as any)[grade] || (STATIC_CONTENT.EVS as any)[2];
+  const found = topics.find((t: any) => t.title.includes(topic)) || topics[0];
   return found;
 };
 
-// Native Browser TTS (Web Speech API) - No AI Tool dependency
 export const speakText = async (text: string): Promise<void> => {
   if (!('speechSynthesis' in window)) return;
-  
-  window.speechSynthesis.cancel(); // Stop any current speech
+  window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.pitch = 1.2;
-  utterance.rate = 0.9;
-  
-  // Try to find a friendly voice
-  const voices = window.speechSynthesis.getVoices();
-  const googleVoice = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en'));
-  if (googleVoice) utterance.voice = googleVoice;
-
+  utterance.pitch = 1.1;
+  utterance.rate = 0.85;
   window.speechSynthesis.speak(utterance);
 };

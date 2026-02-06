@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
-import { BookOpen, Calculator, Leaf, Palette, ArrowLeft, Star, Sparkles, Smile, Microscope, GraduationCap } from 'lucide-react';
-import { Subject, Grade } from './types';
-import Dashboard from './components/Dashboard';
-import EnglishSection from './components/EnglishSection';
-import MathSection from './components/MathSection';
-import EVSSection from './components/EVSSection';
-import ScienceSection from './components/ScienceSection';
-import GradeSelection from './components/GradeSelection';
-import CreativeSection from './components/CreativeSection';
+import { ArrowLeft, Sparkles, Smile, GraduationCap } from 'lucide-react';
+import { Subject, Grade } from './types.ts';
+import Dashboard from './components/Dashboard.tsx';
+import EnglishSection from './components/EnglishSection.tsx';
+import MathSection from './components/MathSection.tsx';
+import EVSSection from './components/EVSSection.tsx';
+import ScienceSection from './components/ScienceSection.tsx';
+import GradeSelection from './components/GradeSelection.tsx';
+import CreativeSection from './components/CreativeSection.tsx';
 
 const App: React.FC = () => {
   const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
@@ -85,7 +85,7 @@ const App: React.FC = () => {
 
       {/* Footer */}
       <footer className="bg-white/50 border-t border-gray-200 p-4 text-center text-gray-500 text-sm">
-        <p>© 2024 Kiddo Explorer - Fun learning for Standards 1 to 5!</p>
+        <p>© 2024 Kiddo Explorer - Fun learning for ICSE Standards 1 to 5!</p>
       </footer>
     </div>
   );
